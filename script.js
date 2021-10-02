@@ -1,6 +1,6 @@
 const section = document.querySelector("section");
 const playerLivesCount = document.querySelector("span");
-const playerLives = 6;
+let playerLives = 6;
 
 playerLivesCount.textContent = playerLives;
 
@@ -60,13 +60,44 @@ const cardGenerator = () => {
     face.classList = "face";
     back.classList = "back";
     face.src = item.imgSrc;
+    card.setAttribute("name", item.name);
+
     section.appendChild(card);
     card.appendChild(face);
     card.appendChild(back);
 
     card.addEventListener("click", (e) => {
       card.classList.toggle("toggleCard");
+      checkCards(e);
     });
   });
 };
+
+const checkCards = (e) => {
+  const clickedCard = e.target;
+  clickedCard.classList.add("flipped");
+  const flippedCards = document.querySelectorAll(".flipped");
+
+  if (flippedCards.length === 2) {
+    if (
+      flippedCards[0].getAttribute("name") ===
+      flippedCards[1].getAttribute("name")
+    ) {
+      console.log("match");
+      flippedCards.forEach((card) => {
+        card.classList.remove("flipped");
+        card.style.pointerEvents = "none";
+      });
+    } else {
+      console.log("wrong");
+      flippedCards.forEach((card) => {
+        card.classList.remove("flipped");
+        setTimeout(() => card.classList.remove("toggleCard"), 1000);
+      });
+      playerLives--;
+      playerLivesCount.textContent = playerLives;
+    }
+  }
+};
+
 cardGenerator();
